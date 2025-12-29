@@ -43,7 +43,7 @@ export default function ServicesSection() {
         {/* Header */}
         <div className="space-y-1">
           <h2 className="text-h4 font-medium tracking-tight">
-            See how we've turned ideas into reality. Dive into the stories
+            See how we&lsquo;ve turned ideas into reality. Dive into the stories
           </h2>
           <h2 className="text-h4 font-medium tracking-tight opacity-40">
             of successful product designs that make a difference.

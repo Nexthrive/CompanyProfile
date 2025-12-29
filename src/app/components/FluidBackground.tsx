@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const FluidBackground = () => {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -101,8 +101,16 @@ const FluidBackground = () => {
     `;
 
     // --- COMPILE SHADERS ---
-    function createShader(gl, type, source) {
+    function createShader(
+      gl: WebGLRenderingContext,
+      type: number,
+      source: string
+    ) {
       const shader = gl.createShader(type);
+      if (!shader) {
+        console.error("Unable to create shader");
+        return null;
+      }
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -119,6 +127,10 @@ const FluidBackground = () => {
       gl.FRAGMENT_SHADER,
       fragmentShaderSource
     );
+
+    if (!vertexShader || !fragmentShader) {
+      return;
+    }
 
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
@@ -161,7 +173,7 @@ const FluidBackground = () => {
       by: gl.getUniformLocation(program, "by"),
     };
 
-    function hexToRgb(hex) {
+    function hexToRgb(hex: string): [number, number, number] {
       const r = parseInt(hex.slice(1, 3), 16) / 255;
       const g = parseInt(hex.slice(3, 5), 16) / 255;
       const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -169,8 +181,8 @@ const FluidBackground = () => {
     }
 
     // --- RENDER LOOP ---
-    let animationFrameId;
-    const render = (time) => {
+    let animationFrameId: number;
+    const render = (time: number) => {
       time *= 0.001;
 
       // Handle Resize automatically within render to keep it responsive

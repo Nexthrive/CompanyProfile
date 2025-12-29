@@ -72,6 +72,7 @@ export default function StickyScrollJustified() {
 }
 
 // Reuse the same TextBlock component from before
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TextBlock({ item, index, activeCard, setActiveCard }: any) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-30% 0px -30% 0px" });
