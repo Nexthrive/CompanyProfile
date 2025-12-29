@@ -46,7 +46,7 @@ export default function StickyScrollJustified() {
       <div className=" sticky top-0 h-screen flex items-center justify-end">
         {" "}
         {/* justify-end aligns image inside box to right */}
-        <div className="relative w-[50rem] h-[50rem] rounded-xl overflow-hidden shadow-2xl bg-gray-900">
+        <div className="relative w-[50rem] h-[30rem] rounded-xl overflow-hidden shadow-2xl bg-gray-900">
           <AnimatePresence mode="popLayout">
             <motion.div
               key={activeCard}
