@@ -21,45 +21,45 @@
 @layer utilities {
   .title {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-weight: 700;
-    font-size: 16.5625rem;
-    line-height: 12rem;
-    /* Add letter-spacing: -0.04em; here if you want it from your screenshot */
+    font-weight: 900;
+    font-size: clamp(3.5rem, 16vw, 22rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
   }
   .text-h1 {
     font-family: "Plus Jakarta Sans", sans-serif;
     font-weight: 500;
-    font-size: 7rem;
-    line-height: 10rem;
-    /* Add letter-spacing: -0.04em; here if you want it from your screenshot */
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
   }
 
   .text-h2 {
     font-family: var(--font-jakarta);
     font-weight: 500;
-    font-size: 5.5rem;
-    line-height: 6.9rem;
+    font-size: clamp(2rem, 6vw, 5.5rem);
+    line-height: 1.25;
   }
 
   .text-h3 {
     font-family: var(--font-jakarta);
     font-weight: 500;
-    font-size: 4rem;
-    line-height: 5rem;
+    font-size: clamp(1.75rem, 5vw, 4rem);
+    line-height: 1.25;
   }
 
   .text-h4 {
     font-family: var(--font-jakarta);
     font-weight: 500;
-    font-size: 3rem;
-    line-height: 4rem;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.3;
   }
 
   .text-h5 {
     font-family: var(--font-jakarta);
     font-weight: 500;
-    font-size: 2rem;
-    line-height: 3.5rem;
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    line-height: 1.4;
   }
 
   /* ----------------------------------------------------
