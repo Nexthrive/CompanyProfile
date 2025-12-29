@@ -226,7 +226,7 @@ const FluidBackground = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="block w-full h-full bg-black" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full bg-black" style={{ borderRadius: 'inherit' }} />;
 };
 
 export default FluidBackground;
