@@ -12,18 +12,21 @@ export default function Home() {
         <section id="Hero" className="w-full">
           <HeroSection />
         </section>
-        
+
         {/* Content sections with responsive padding */}
         <div className="px-4 md:px-8 lg:px-[4.6rem] flex flex-col">
-          <section id="Projects" className="relative z-10">
+          <section
+            id="Projects"
+            className="mt-12 md:mt-16 lg:mt-20 relative z-10"
+          >
             <ProjectSection />
           </section>
           <section id="Services" className="">
             <ServicesSection />
           </section>
-          <section id="About" className="mt-32 md:mt-48 lg:mt-[25.625rem] mb-32 md:mb-48 lg:mb-[22.9375rem]">
+          {/* <section id="About" className="mt-32 md:mt-48 lg:mt-[25.625rem] mb-32 md:mb-48 lg:mb-[22.9375rem]">
             <AboutSection />
-          </section>
+          </section> */}
           <ActionCard />
         </div>
       </main>
