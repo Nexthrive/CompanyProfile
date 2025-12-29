@@ -6,7 +6,7 @@ const FluidBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current as HTMLCanvasElement | null;
     if (!canvas) return;
 
     const gl = canvas.getContext("webgl");
@@ -15,13 +15,13 @@ const FluidBackground = () => {
       return;
     }
 
-    // --- CONFIGURATION (From your request) ---
+    // --- CONFIGURATION ---
     const config = {
-      color1: "#171717",
-      color2: "#2b8591",
+      color1: "#171717", // Darker background
+      color2: "#2b8591", // Cyan/Teal liquid
       balance: -0.2,
       contrast: 2.0,
-      scale: 0.35,
+      scale: 0.6, // Slightly larger scale for screen-space feel
       speed: 0.1,
       // Noise settings
       ax: 2.0,
@@ -32,7 +32,6 @@ const FluidBackground = () => {
       by: 1.0,
     };
 
-    // --- SHADERS ---
     const vertexShaderSource = `
       attribute vec2 position;
       void main() {
@@ -40,11 +39,12 @@ const FluidBackground = () => {
       }
     `;
 
-    // Mouse logic removed from here
+    // UPDATED FRAGMENT SHADER: Uses Screen Resolution for continuity
     const fragmentShaderSource = `
       precision highp float;
       
-      uniform vec2 u_resolution;
+      uniform vec2 u_resolution; // The size of this specific canvas (pixel width/height)
+      uniform vec2 u_screen_res; // The size of the entire browser window
       uniform float u_time;
       uniform vec3 u_color1;
       uniform vec3 u_color2;
@@ -67,8 +67,14 @@ const FluidBackground = () => {
       }
 
       void main() {
-        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-        float aspect = u_resolution.x / u_resolution.y;
+        // --- KEY FIX: SCREEN SPACE MAPPING ---
+        // Instead of dividing by u_resolution (local box), we divide gl_FragCoord 
+        // by u_screen_res. This aligns the noise pattern to the screen, not the div.
+        
+        vec2 uv = gl_FragCoord.xy / u_screen_res.xy;
+        
+        // Correct aspect ratio based on SCREEN, not box
+        float aspect = u_screen_res.x / u_screen_res.y;
         uv.x *= aspect;
         
         // Scale
@@ -100,17 +106,13 @@ const FluidBackground = () => {
       }
     `;
 
-    // --- COMPILE SHADERS ---
     function createShader(
       gl: WebGLRenderingContext,
       type: number,
       source: string
-    ) {
+    ): WebGLShader | null {
       const shader = gl.createShader(type);
-      if (!shader) {
-        console.error("Unable to create shader");
-        return null;
-      }
+      if (!shader) return null;
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -129,6 +131,7 @@ const FluidBackground = () => {
     );
 
     if (!vertexShader || !fragmentShader) {
+      console.error("Shader creation failed");
       return;
     }
 
@@ -136,14 +139,8 @@ const FluidBackground = () => {
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(program));
-      return;
-    }
     gl.useProgram(program);
 
-    // --- BUFFERS ---
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(
@@ -159,6 +156,7 @@ const FluidBackground = () => {
     // --- UNIFORMS ---
     const locs = {
       res: gl.getUniformLocation(program, "u_resolution"),
+      screenRes: gl.getUniformLocation(program, "u_screen_res"), // NEW
       time: gl.getUniformLocation(program, "u_time"),
       c1: gl.getUniformLocation(program, "u_color1"),
       c2: gl.getUniformLocation(program, "u_color2"),
@@ -180,21 +178,32 @@ const FluidBackground = () => {
       return [r, g, b];
     }
 
-    // --- RENDER LOOP ---
     let animationFrameId: number;
     const render = (time: number) => {
       time *= 0.001;
 
-      // Handle Resize automatically within render to keep it responsive
-      const displayWidth = canvas.clientWidth;
-      const displayHeight = canvas.clientHeight;
-      if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-        canvas.width = displayWidth;
-        canvas.height = displayHeight;
+      // Handle Component Resize
+      const displayWidth = (canvas as HTMLCanvasElement).clientWidth;
+      const displayHeight = (canvas as HTMLCanvasElement).clientHeight;
+      if (
+        (canvas as HTMLCanvasElement).width !== displayWidth ||
+        (canvas as HTMLCanvasElement).height !== displayHeight
+      ) {
+        (canvas as HTMLCanvasElement).width = displayWidth;
+        (canvas as HTMLCanvasElement).height = displayHeight;
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
       }
 
-      gl.uniform2f(locs.res, canvas.width, canvas.height);
+      // Pass component size
+      gl.uniform2f(
+        locs.res,
+        (canvas as HTMLCanvasElement).width,
+        (canvas as HTMLCanvasElement).height
+      );
+
+      // Pass SCREEN size (This syncs the pattern across multiple components)
+      gl.uniform2f(locs.screenRes, window.innerWidth, window.innerHeight);
+
       gl.uniform1f(locs.time, time * config.speed);
 
       const c1 = hexToRgb(config.color1);
@@ -218,15 +227,12 @@ const FluidBackground = () => {
 
     render(0);
 
-    // --- CLEANUP ---
     return () => {
       cancelAnimationFrame(animationFrameId);
-      // Optional: Delete webgl resources if component unmounts frequently
-      gl.deleteProgram(program);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full bg-black" style={{ borderRadius: 'inherit' }} />;
+  return <canvas ref={canvasRef} className="block w-full h-full" />;
 };
 
 export default FluidBackground;
