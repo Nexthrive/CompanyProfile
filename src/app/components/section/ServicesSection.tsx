@@ -1,5 +1,7 @@
 "use client";
 import ServiceCard, { ServiceItem } from "@/app/components/card/ServiceCard";
+import { motion } from "framer-motion";
+import { useInView } from "framer-motion";
 
 const SERVICES: ServiceItem[] = [
   {
@@ -36,24 +38,42 @@ const SERVICES: ServiceItem[] = [
   },
 ];
 
+const headerVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.6, 0.05, 0.01, 0.9] as [number, number, number, number],
+    },
+  },
+};
+
 export default function ServicesSection() {
   return (
     <section>
-      <div className="flex flex-col gap-12 py-20 ">
-        {/* Header */}
-        <div className="space-y-1">
-          <h2 className="text-h4 font-medium tracking-tight">
+      <div className="flex flex-col gap-12 md:gap-16 py-12 md:py-16 lg:py-20">
+        {/* Header - Animated */}
+        <motion.div 
+          className="space-y-2 max-w-4xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={headerVariants}
+        >
+          <h2 className="text-2xl md:text-3xl lg:text-h4 font-medium tracking-tight leading-tight">
             See how we&lsquo;ve turned ideas into reality. Dive into the stories
           </h2>
-          <h2 className="text-h4 font-medium tracking-tight opacity-40">
+          <h2 className="text-2xl md:text-3xl lg:text-h4 font-medium tracking-tight opacity-40 leading-tight">
             of successful product designs that make a difference.
           </h2>
-        </div>
+        </motion.div>
 
-        {/* Services List */}
-        <div className="flex flex-col gap-8 justify-center items-center">
+        {/* Services List - Alternating Layout */}
+        <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">
           {SERVICES.map((service, index) => (
-            <ServiceCard key={index} service={service} />
+            <ServiceCard key={index} service={service} index={index} />
           ))}
         </div>
       </div>
