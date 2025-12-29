@@ -3,60 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
-import Lenis from "lenis";
-
-import { useEffect, useRef } from "react";
-
-function useLenis() {
-  const [lenis, setLenis] = useState<Lenis | null>(null);
-  const lenisRef = useRef<Lenis | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!lenisRef.current) {
-      lenisRef.current = new Lenis({
-        // increase duration to slow down the scrolling
-        duration: 2.5,
-        easing: (t) => Math.min(1, 1 - Math.pow(2, -10 * t)),
-        orientation: "vertical",
-        gestureOrientation: "vertical",
-        smoothWheel: true,
-        wheelMultiplier: 1,
-        touchMultiplier: 2,
-        infinite: false,
-        autoResize: true,
-      });
-      setLenis(lenisRef.current);
-    }
-    function raf(time: number) {
-      lenisRef.current?.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-    return () => {
-      // Optionally clean up
-    };
-  }, []);
-
-  return lenis;
-}
-
-function handleSmoothScroll(
-  e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  id: string,
-  lenis: Lenis | null
-) {
-  e.preventDefault();
-  const el =
-    id === "#" ? document.body : document.getElementById(id.replace("#", ""));
-  if (el) {
-    if (lenis) {
-      lenis.scrollTo(el, { offset: 0 });
-    } else {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  }
-}
+import { useLenis, handleSmoothScroll } from "@/app/utils";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -153,6 +100,16 @@ export default function NavBar() {
               Home
             </a>
             <a
+              href="#Projects"
+              className="text-base font-normal py-2 hover:bg-black/5 px-4 rounded-lg transition"
+              onClick={(e) => {
+                handleSmoothScroll(e, "#Projects", lenis);
+                setIsOpen(false);
+              }}
+            >
+              Work
+            </a>
+            {/* <a
               href="#About"
               className="text-base font-normal py-2 hover:bg-black/5 px-4 rounded-lg transition"
               onClick={(e) => {
@@ -161,7 +118,7 @@ export default function NavBar() {
               }}
             >
               About
-            </a>
+            </a> */}
             <a
               href="#Services"
               className="text-base font-normal py-2 hover:bg-black/5 px-4 rounded-lg transition"
@@ -172,16 +129,7 @@ export default function NavBar() {
             >
               Services
             </a>
-            <a
-              href="#Projects"
-              className="text-base font-normal py-2 hover:bg-black/5 px-4 rounded-lg transition"
-              onClick={(e) => {
-                handleSmoothScroll(e, "#Projects", lenis);
-                setIsOpen(false);
-              }}
-            >
-              Work
-            </a>
+            
             <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-black/30 bg-[#eaf1f2] text-base font-medium transition hover:bg-[#e0e7ea] mt-2">
               Start Project
               <span className="text-lg">»</span>

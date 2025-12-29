@@ -3,6 +3,7 @@ import HeroWord from "@/app/components/texts/HeroWord";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useLenis, handleSmoothScroll } from "@/app/utils";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,6 +44,7 @@ const logoVariants = {
 
 export default function HomeSection() {
   const [shouldAnimate, setShouldAnimate] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     // Check if loading is complete
@@ -61,16 +63,16 @@ export default function HomeSection() {
   return (
     <section className="relative w-full h-svh flex items-center px-4 md:px-8 lg:px-[4.6rem]">
       {/* Background Logo - Animated */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 flex items-center justify-start md:justify-start px-4 md:px-8 lg:px-[4.6rem] z-0 pointer-events-none overflow-hidden"
         initial="hidden"
         animate={shouldAnimate ? "visible" : "hidden"}
         variants={logoVariants}
       >
         <div className="relative w-[400px] h-[400px] md:w-[600px] md:h-[600px] lg:w-[752px] lg:h-[752px] opacity-40 md:opacity-100">
-          <Image 
-            src="/LogoN.png" 
-            alt="Background N" 
+          <Image
+            src="/LogoN.png"
+            alt="Background N"
             fill
             className="object-contain"
             priority
@@ -79,14 +81,14 @@ export default function HomeSection() {
       </motion.div>
 
       {/* Hero Content - Animated */}
-      <motion.div 
+      <motion.div
         className="relative z-10 space-y-4 md:space-y-6 max-w-full"
         initial="hidden"
         animate={shouldAnimate ? "visible" : "hidden"}
         variants={containerVariants}
       >
         {/* Row 1 */}
-        <motion.div 
+        <motion.div
           className="flex flex-wrap items-center gap-2 md:gap-3"
           variants={itemVariants}
         >
@@ -97,10 +99,7 @@ export default function HomeSection() {
         </motion.div>
 
         {/* Row 2 */}
-        <motion.div 
-          className="flex"
-          variants={itemVariants}
-        >
+        <motion.div className="flex" variants={itemVariants}>
           <div className="flex flex-wrap items-center gap-2 md:gap-3 glow">
             <span className="text-h1">Limitless</span>
             <HeroWord text="Possibilities." />
@@ -108,20 +107,34 @@ export default function HomeSection() {
         </motion.div>
 
         {/* CTA */}
-        <motion.div 
+        <motion.div
           className="mt-12 md:mt-16 lg:mt-[8rem] flex items-center gap-3 md:gap-5"
           variants={itemVariants}
         >
-          <span className="text-base md:text-lg lg:text-h5 underline cursor-pointer hover:opacity-70 transition">
-            View Our Work
+          <span className="text-h5 md:text-lg lg:text-h5 underline cursor-pointer hover:opacity-70 transition">
+            <a
+              href="#Projects"
+              onClick={(e) => {
+                handleSmoothScroll(e, "#Projects", lenis);
+              }}
+            >
+              View Our Work
+            </a>
           </span>
-          <Image
-            src="/Vector.png"
-            alt="Arrow Right"
-            width={32}
-            height={20}
-            className="md:w-[40px] md:h-[24px] cursor-pointer hover:translate-x-1 transition-transform"
-          />
+          <a
+            href="#Projects"
+            onClick={(e) => {
+              handleSmoothScroll(e, "#Projects", lenis);
+            }}
+          >
+            <Image
+              src="/Vector.png"
+              alt="Arrow Right"
+              width={32}
+              height={20}
+              className="md:w-[40px] md:h-[24px] cursor-pointer hover:translate-x-1 transition-transform"
+            />
+          </a>
         </motion.div>
       </motion.div>
     </section>
